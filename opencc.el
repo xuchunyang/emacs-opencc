@@ -138,7 +138,7 @@ THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
 (put 'opencc-message 'interactive-only 'opencc-string)
 
 ;;;###autoload
-(defun opencc-replace ()
+(defun opencc-replace-at-point ()
   "一个交互命令，转化并替换光标下的文字."
   (interactive "*")
   (let* ((config (completing-read
@@ -161,7 +161,26 @@ THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
     (opencc-awhen (opencc-region config start end)
       (delete-region start end)
       (insert it))))
-(put 'opencc-replace 'interactive-only 'opencc-string)
+(put 'opencc-replace-at-point 'interactive-only 'opencc-string)
+
+;;;###autoload
+(defun opencc-print-buffer (config &optional input-buffer output-buffer)
+  "一个交互命令，转化当前 Buffer 中的内容，在 *OpenCC Output* Buffer 中显示结果."
+  (interactive
+   (let ((config (completing-read
+                  "配置文件: "
+                  opencc-configuration-files)))
+     (list config nil nil)))
+  (unless input-buffer
+    (setq input-buffer (current-buffer)))
+  (unless output-buffer
+    (setq output-buffer (get-buffer-create "*OpenCC Output*")))
+  (let ((result (with-current-buffer input-buffer
+                  (opencc-region config (point-min) (point-max)))))
+    (with-current-buffer output-buffer
+      (delete-region (point-min) (point-max))
+      (insert result)
+      (display-buffer (current-buffer)))))
 
 (provide 'opencc)
 ;;; opencc.el ends here

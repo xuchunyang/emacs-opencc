@@ -111,8 +111,8 @@ THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
       (process-send-string proc (concat string "\n"))
       (while (not (and (> (point-max) 1)
                        (eq (char-after (1- (point-max))) ?\n)))
-        (accept-process-output proc 0 5)
-        (setq result (buffer-substring (point-min) (1- (point-max))))))
+        (accept-process-output proc 0 5))
+      (setq result (buffer-substring (point-min) (1- (point-max)))))
     result))
 
 ;;;###autoload

@@ -79,6 +79,7 @@
                            proc-buffer
                            opencc-command
                            "--config" config))
+      (set-process-query-on-exit-flag proc nil)
       ;; XXX How to know the opencc process is ready to go?
       (sleep-for 0.1))
     (with-current-buffer proc-buffer

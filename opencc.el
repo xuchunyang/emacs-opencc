@@ -80,6 +80,10 @@
       ;; XXX How to know the opencc process is ready to go?
       (sleep-for 0.1))
     (with-current-buffer proc-buffer
+      (unless (eq (process-status proc) 'run)
+        (message "%s" (buffer-string))
+        (delete-region (point-min) (point-max))
+        (error "Process %s is not running" proc))
       (delete-region (point-min) (point-max))
       (process-send-string proc (concat string "\n"))
       (while (not (and (> (point-max) 1)

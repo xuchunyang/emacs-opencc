@@ -1,4 +1,4 @@
-;;; opencc.el --- 中文简繁转换  -*- lexical-binding: t; -*-
+;;; opencc.el --- 中文简繁转换 <-> 中文簡繁轉換  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 徐春阳
 
@@ -28,8 +28,10 @@
 
 ;;; Code:
 
+;;; Options
+
 (defgroup opencc nil
-  "中文简繁转换."
+  "中文简繁转换 <-> 中文簡繁轉換."
   :group 'external)
 
 (defcustom opencc-command "opencc"
@@ -62,6 +64,24 @@
 "
   :group 'opencc
   :type '(repeat (string :tag "配置文件")))
+
+;;; Internal helpers
+
+(defmacro opencc-aif (test-form then-form &rest else-forms)
+  "Anaphoric version of `if'.
+Like `if' but set the result of TEST-FORM in a temporary variable called `it'.
+THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
+  (declare (indent 2) (debug t))
+  `(let ((it ,test-form))
+     (if it ,then-form ,@else-forms)))
+
+(defmacro opencc-awhen (test &rest body)
+  "Anaphoric version of `when'."
+  (declare (indent 1))
+  `(let ((it ,test))
+     (when it ,@body)))
+
+;;; API
 
 ;;;###autoload
 (defun opencc-string (config string)
@@ -101,6 +121,47 @@
 
 如果你没有自己的配置文件，请到在 `opencc-configuration-files' 中选择一个."
   (opencc-string config (buffer-substring-no-properties start end)))
+
+;;; User commands
+
+;;;###autoload
+(defun opencc-message ()
+  "一个交互命令，使用 minibuffer 和 echo area 读取输入和显示结果."
+  (interactive)
+  (let ((config (completing-read
+                 "配置文件: "
+                 opencc-configuration-files))
+        (string (if (use-region-p)
+                    (buffer-substring (region-beginning) (region-end))
+                  (read-string "需转化文字：" nil nil (thing-at-point 'word)))))
+    (message "%s" (opencc-string config string))))
+(put 'opencc-message 'interactive-only 'opencc-string)
+
+;;;###autoload
+(defun opencc-replace ()
+  "一个交互命令，转化并替换光标下的文字."
+  (interactive "*")
+  (let* ((config (completing-read
+                  "配置文件: "
+                  opencc-configuration-files))
+         start end
+         (string (if (use-region-p)
+                     (progn (setq start (region-beginning)
+                                  end (region-end))
+                            (buffer-substring start end))
+                   (opencc-awhen (bounds-of-thing-at-point 'word)
+                     (setq start (car it)
+                           end (cdr it))
+                     (buffer-substring start end)))))
+    (unless string
+      (apply (if (fboundp 'user-error)
+                 #'user-error
+               #'error)
+             '("Nothing at point to replace")))
+    (opencc-awhen (opencc-region config start end)
+      (delete-region start end)
+      (insert it))))
+(put 'opencc-replace 'interactive-only 'opencc-string)
 
 (provide 'opencc)
 ;;; opencc.el ends here

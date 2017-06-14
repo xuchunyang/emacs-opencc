@@ -65,7 +65,9 @@
 
 ;;;###autoload
 (defun opencc-string (config string)
-  "按配置文件 CONFIG 转换字符串 STRING."
+  "按配置文件 CONFIG 转换字符串 STRING.
+
+如果你没有自己的配置文件，请到在 `opencc-configuration-files' 中选择一个."
   (let* ((proc-name (format " *opencc-%s*" config))
          (proc-buffer proc-name)
          (proc (and (get-buffer proc-buffer)
@@ -95,7 +97,8 @@
 ;;;###autoload
 (defun opencc-region (config start end)
   "按配置文件 CONFIG 转换 START 和 END 之间的文字.
-返回值是一个字符串."
+
+如果你没有自己的配置文件，请到在 `opencc-configuration-files' 中选择一个."
   (opencc-string config (buffer-substring-no-properties start end)))
 
 (provide 'opencc)

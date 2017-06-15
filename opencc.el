@@ -29,7 +29,6 @@
 ;; 一些想法：
 ;;
 ;; - 估测繁体和简体
-;; - 用户输入简体，自动转化成繁体，诸如此类
 ;; - 用户在一个 Buffer 中输入，在另一个 Buffer 中实时地显示转换结果，类似 Google 翻译的感觉
 
 ;;; Code:
@@ -88,6 +87,17 @@ sys	0m0.007s"
 "
   :group 'opencc
   :type '(repeat (string :tag "配置文件")))
+
+(defcustom opencc-insert-mode-config "s2t"
+  "`opencc-insert-mode' 使用的配置文件."
+  :group 'opencc
+  :type '(string :tag "配置文件"))
+
+(defcustom opencc-insert-mode-lighter " OpenCC-Insert"
+  "`opencc-insert-mode' 在 Mode Line 上的提示符."
+  :group 'opencc
+  :type '(choice (const :tag "none" nil)
+                 string))
 
 ;;; Internal helpers
 
@@ -210,6 +220,22 @@ THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
       (delete-region (point-min) (point-max))
       (insert result)
       (display-buffer (current-buffer)))))
+
+;; XXX 使用 `defsubst' 提高性能？
+(defun opencc-insert-mode--post-self-insert-hook ()
+  (let ((char last-command-event))
+    (when (aref (char-category-set char) ?c)
+      (delete-char -1)
+      (insert (opencc-string opencc-insert-mode-config (string char))))))
+
+;;;###autoload
+(define-minor-mode opencc-insert-mode
+  "按照 `opencc-insert-mode-config' 转换并替换每一个输入的汉字."
+  :global t
+  :lighter opencc-insert-mode-lighter
+  (if opencc-insert-mode
+      (add-hook 'post-self-insert-hook #'opencc-insert-mode--post-self-insert-hook)
+    (remove-hook 'post-self-insert-hook #'opencc-insert-mode--post-self-insert-hook)))
 
 (provide 'opencc)
 ;;; opencc.el ends here

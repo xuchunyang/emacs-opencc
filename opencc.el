@@ -23,8 +23,14 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
+;; OpenCC 的网站是： https://github.com/BYVoid/OpenCC
+
+;; 一些想法：
 ;;
-;; https://github.com/BYVoid/OpenCC
+;; - 估测繁体和简体
+;; - 用户输入简体，自动转化成繁体，诸如此类
+;; - 用户在一个 Buffer 中输入，在另一个 Buffer 中实时地显示转换结果，类似 Google 翻译的感觉
 
 ;;; Code:
 

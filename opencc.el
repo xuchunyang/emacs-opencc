@@ -28,8 +28,9 @@
 
 ;; 一些想法：
 ;;
-;; - 估测繁体和简体
-;; - 用户在一个 Buffer 中输入，在另一个 Buffer 中实时地显示转换结果，类似 Google 翻译的感觉
+;; TODO 改进补全 `opencc-configuration-files' 的提示
+;; TODO 用户在一个 Buffer 中输入，在另一个 Buffer 中实时地显示转换结果，类似 Google 翻译的感觉
+;; TODO 估测繁体和简体？
 
 ;;; Code:
 

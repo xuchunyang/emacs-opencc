@@ -39,6 +39,24 @@
   :group 'opencc
   :type '(string))
 
+(defcustom opencc-sleep 0.1
+  "OpenCC 命令行工具完成初始化所需时间的上限(单位是秒).
+
+为了提高速度，opencc 以异步子进程(Asynchronous Process)的方式运行，
+但它启动完成时没有任何输出，因此 Emacs 不能知道它是还在启动中、还
+是已经结束启动了. 所以不得不 Emacs 暂停一会，确保 opencc 能完成启动.
+
+它的默认值时 0.1 秒，是因为在我的电脑上，opencc 的启动时间是明显少于 0.1 秒的：
+
+~$ time opencc -c s2t <<< 汉字
+漢字
+
+real	0m0.057s
+user	0m0.037s
+sys	0m0.007s"
+  :group 'opencc
+  :type '(number))
+
 (defcustom opencc-configuration-files '("s2t"
                                         "t2s"
                                         "s2tw"
@@ -100,8 +118,12 @@ THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
                            opencc-command
                            "--config" config))
       (set-process-query-on-exit-flag proc nil)
-      ;; XXX How to know the opencc process is ready to go?
-      (sleep-for 0.1))
+      ;; XXX `opencc' 启动完成时，也不会有任何输出，所以没办法知道它是
+      ;; 否已经准备好接收输入了，可以
+      ;; 1. 确定下 Emacs 是不是就不能处理这种情况；
+      ;; 2. 向上游 OpenCC 寻求帮助；
+      ;; 3. 自己写一个 OpenCC 的 Wrapper
+      (sleep-for opencc-sleep))
     (with-current-buffer proc-buffer
       (unless (eq (process-status proc) 'run)
         (message "%s" (buffer-string))
@@ -109,6 +131,7 @@ THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
         (error "Process %s is not running" proc))
       (delete-region (point-min) (point-max))
       (process-send-string proc (concat string "\n"))
+      ;; XXX 下面是从 `migemo.el' 抄来的，我还没搞清楚为什么
       (while (not (and (> (point-max) 1)
                        (eq (char-after (1- (point-max))) ?\n)))
         (accept-process-output proc 0.005))

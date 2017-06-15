@@ -24,13 +24,10 @@
 
 ;;; Commentary:
 
-;; OpenCC 的网站是： https://github.com/BYVoid/OpenCC
-
-;; 一些想法：
+;; `opencc.el' is a package for conversion between Traditional and
+;; Simplified Chinese in Emacs using OpenCC's command line tool.
 ;;
-;; TODO 改进补全 `opencc-configuration-files' 的提示
-;; TODO 用户在一个 Buffer 中输入，在另一个 Buffer 中实时地显示转换结果，类似 Google 翻译的感觉
-;; TODO 估测繁体和简体？
+;; [OpenCC] https://github.com/BYVoid/OpenCC
 
 ;;; Code:
 

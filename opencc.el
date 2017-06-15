@@ -148,10 +148,7 @@ THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
         (error "Process %s is not running" proc))
       (delete-region (point-min) (point-max))
       (process-send-string proc (concat string "\n"))
-      ;; XXX 下面是从 `migemo.el' 抄来的，我还没搞清楚为什么
-      (while (not (and (> (point-max) 1)
-                       (eq (char-after (1- (point-max))) ?\n)))
-        (accept-process-output proc 0.005))
+      (accept-process-output proc)
       (setq result (buffer-substring (point-min) (1- (point-max)))))
     result))
 

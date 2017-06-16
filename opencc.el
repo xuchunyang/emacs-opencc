@@ -263,7 +263,7 @@ THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
 
 ;;;###autoload
 (define-minor-mode opencc-isearch-mode
-  "按照 `opencc-isearch-mode-config' 转换使用 Isearch 时所输入的中文."
+  "输入简体搜索繁体（可通过 `opencc-isearch-mode-config' 调整转换的方向）."
   :global t
   :lighter opencc-isearch-mode-lighter
   (if opencc-isearch-mode

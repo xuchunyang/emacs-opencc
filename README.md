@@ -13,27 +13,13 @@
 
 ### `(opencc-string CONFIG STRING)`
 
-按配置文件 CONFIG 转换字符串 STRING。使用举例：
+按配置文件 CONFIG 转换字符串 STRING。比如把简体转换成繁体：
 
 
 ```el
 (opencc-string "s2t" "简繁转换")
      => "簡繁轉換"
 ```
-
-
-其中 `s2t` 是指“把简体转换成繁体”，OpenCC 预设的配置有：
-
-| 配置 | 说明 | 说明 |
-| --- | --- | --- |
-| s2t      | 简体到繁体                                         | Simplified Chinese to Traditional Chinese                                               |
-| t2s      | 繁体到简体                                         | Traditional Chinese to Simplified Chinese                                               |
-| s2tw     | 简体到台湾正体                                     | Simplified Chinese to Traditional Chinese <Taiwan Standard>                             |
-| tw2s     | 台湾正体到简体                                     | Traditional Chinese <Taiwan Standard> to Simplified Chinese                             |
-| s2hk     | 简体到香港繁体（香港小学学习字词表标准）           | Simplified Chinese to Traditional Chinese <Hong Kong Standard>                          |
-| hk2s     | 香港繁体（香港小学学习字词表标准）到简体           | Traditional Chinese <Hong Kong Standard> to Simplified Chinese                          |
-| s2twp    | 简体到繁体（台湾正体标准）并转换为台湾常用词汇     | Simplified Chinese to Traditional Chinese <Taiwan Standard> with Taiwanese idiom        |
-| tw2sp    | 繁体（台湾正体标准）到简体并转换为中国大陆常用词汇 | Traditional Chinese <Taiwan Standard> to Simplified Chinese with Mainland Chinese idiom |
 
 ### `(opencc-region CONFIG START END)`
 
@@ -57,4 +43,24 @@
 
 ### `M-x opencc-insert-mode`
 
-这是一个全局的 Minor Mode，如果启动了它，所输入的简体字会自动转换成繁体字。可通过选项 `opencc-insert-mode-config` 调整转换的方向。
+
+输入的简体自动转换层繁体。可通过选项 `opencc-insert-mode-config` 调整转换的方向。
+
+### `M-x opencc-isearch-mode`
+
+输入简体搜索对应的繁体。可通过 `opencc-isearch-mode-config` 调整转换的方向。
+
+## 备注
+
+### [OpenCC 预设配置文件](https://github.com/BYVoid/OpenCC#configurations-配置文件)
+
+| 配置 | 说明 | 说明 |
+| --- | --- | --- |
+| s2t      | 简体到繁体                                         | Simplified Chinese to Traditional Chinese                                               |
+| t2s      | 繁体到简体                                         | Traditional Chinese to Simplified Chinese                                               |
+| s2tw     | 简体到台湾正体                                     | Simplified Chinese to Traditional Chinese <Taiwan Standard>                             |
+| tw2s     | 台湾正体到简体                                     | Traditional Chinese <Taiwan Standard> to Simplified Chinese                             |
+| s2hk     | 简体到香港繁体（香港小学学习字词表标准）           | Simplified Chinese to Traditional Chinese <Hong Kong Standard>                          |
+| hk2s     | 香港繁体（香港小学学习字词表标准）到简体           | Traditional Chinese <Hong Kong Standard> to Simplified Chinese                          |
+| s2twp    | 简体到繁体（台湾正体标准）并转换为台湾常用词汇     | Simplified Chinese to Traditional Chinese <Taiwan Standard> with Taiwanese idiom        |
+| tw2sp    | 繁体（台湾正体标准）到简体并转换为中国大陆常用词汇 | Traditional Chinese <Taiwan Standard> to Simplified Chinese with Mainland Chinese idiom |

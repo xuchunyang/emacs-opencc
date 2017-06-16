@@ -97,6 +97,17 @@ sys	0m0.007s"
   :type '(choice (const :tag "none" nil)
                  string))
 
+(defcustom opencc-isearch-mode-config "s2t"
+  "`opencc-isearch-mode' 使用的配置文件."
+  :group 'opencc
+  :type '(string :tag "配置文件"))
+
+(defcustom opencc-isearch-mode-lighter ""
+  "`opencc-isearch-mode' 在 Mode Line 上的提示符."
+  :group 'opencc
+  :type '(choice (const :tag "none" nil)
+                 string))
+
 ;;; Internal helpers
 
 (defmacro opencc-aif (test-form then-form &rest else-forms)
@@ -231,6 +242,33 @@ THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
   (if opencc-insert-mode
       (add-hook 'post-self-insert-hook #'opencc-insert-mode--post-self-insert-hook)
     (remove-hook 'post-self-insert-hook #'opencc-insert-mode--post-self-insert-hook)))
+
+(defvar opencc-isearch-string-cache '("" . "")
+  "Cache for `opencc-isearch-search-fun'.")
+(make-variable-buffer-local 'opencc-isearch-string-cache)
+
+(defun opencc-isearch-search-fun ()
+  "Should be the value of `isearch-search-fun-function'."
+  (lambda (string &rest args)
+    (apply (isearch-search-fun-default)
+           (if (equal string (car opencc-isearch-string-cache))
+               (cdr opencc-isearch-string-cache)
+             (if (string-match-p "\\cc" string)
+                 (let ((result-string (opencc-string opencc-isearch-mode-config string)))
+                   (setq opencc-isearch-string-cache (cons string result-string))
+                   result-string)
+               (setq opencc-isearch-string-cache (cons string string))
+               string))
+           args)))
+
+;;;###autoload
+(define-minor-mode opencc-isearch-mode
+  "按照 `opencc-isearch-mode-config' 转换使用 Isearch 时所输入的中文."
+  :global t
+  :lighter opencc-isearch-mode-lighter
+  (if opencc-isearch-mode
+      (setq isearch-search-fun-function #'opencc-isearch-search-fun)
+    (setq isearch-search-fun-function #'isearch-search-fun-default)))
 
 (provide 'opencc)
 ;;; opencc.el ends here

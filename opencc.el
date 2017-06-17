@@ -102,7 +102,7 @@ sys	0m0.007s"
   :group 'opencc
   :type '(string :tag "配置文件"))
 
-(defcustom opencc-isearch-mode-lighter ""
+(defcustom opencc-isearch-mode-lighter " OpenCC-Isearch"
   "`opencc-isearch-mode' 在 Mode Line 上的提示符."
   :group 'opencc
   :type '(choice (const :tag "none" nil)

@@ -247,18 +247,36 @@ THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
   "Cache for `opencc-isearch-search-fun'.")
 (make-variable-buffer-local 'opencc-isearch-string-cache)
 
+(defun opencc-isearch-string (string)
+  "Prepare STRING for isearch.
+
+If STRING contains Chinese, convert it with `opencc-string' then
+return the result.  Otherwise, return STRING.
+
+Also setup cache via `opencc-isearch-string-cache' because it looks
+`isearch-search-fun-function' is supposed to be called with the
+same input for multiple times in a short time."
+  (if (equal string (car opencc-isearch-string-cache))
+      (cdr opencc-isearch-string-cache)
+    (if (string-match-p "\\cc" string)
+        (let ((result-string (opencc-string opencc-isearch-mode-config string)))
+          (setq opencc-isearch-string-cache (cons string result-string))
+          result-string)
+      (setq opencc-isearch-string-cache (cons string string))
+      string)))
+
 (defun opencc-isearch-search-fun ()
   "Should be the value of `isearch-search-fun-function'."
   (lambda (string &rest args)
     (apply (isearch-search-fun-default)
-           (if (equal string (car opencc-isearch-string-cache))
-               (cdr opencc-isearch-string-cache)
-             (if (string-match-p "\\cc" string)
-                 (let ((result-string (opencc-string opencc-isearch-mode-config string)))
-                   (setq opencc-isearch-string-cache (cons string result-string))
-                   result-string)
-               (setq opencc-isearch-string-cache (cons string string))
-               string))
+           (opencc-isearch-string string)
+           args)))
+
+(defun multi-isearch-search-fun@support-opencc (orig-fun)
+  "Advice around `multi-isearch-search-fun' for OpenCC support."
+  (lambda (string &rest args)
+    (apply (funcall orig-fun)
+           (opencc-isearch-string string)
            args)))
 
 ;;;###autoload
@@ -267,8 +285,13 @@ THEN-FORM and ELSE-FORMS are then excuted just like in `if'."
   :global t
   :lighter opencc-isearch-mode-lighter
   (if opencc-isearch-mode
-      (setq isearch-search-fun-function #'opencc-isearch-search-fun)
-    (setq isearch-search-fun-function #'isearch-search-fun-default)))
+      (progn
+        (setq isearch-search-fun-function #'opencc-isearch-search-fun)
+        (advice-add 'multi-isearch-search-fun
+                    :around #'multi-isearch-search-fun@support-opencc))
+    (setq isearch-search-fun-function #'isearch-search-fun-default)
+    (advice-remove 'multi-isearch-search-fun
+                   #'multi-isearch-search-fun@support-opencc)))
 
 (provide 'opencc)
 ;;; opencc.el ends here

@@ -5,7 +5,7 @@
 ;; Author: 徐春阳 <mail@xuchunyang.me>
 ;; URL: https://github.com/xuchunyang/emacs-opencc
 ;; Version: 0
-;; Package-Requires: ((emacs "24.1"))
+;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: Chinese
 ;; Created: 公历2017年6月14日，星期三
 
@@ -287,6 +287,7 @@ same input for multiple times in a short time."
   (if opencc-isearch-mode
       (progn
         (setq isearch-search-fun-function #'opencc-isearch-search-fun)
+        ;; `advice-add' comes from `nadvice.el', added since Emacs-24.4
         (advice-add 'multi-isearch-search-fun
                     :around #'multi-isearch-search-fun@support-opencc))
     (setq isearch-search-fun-function #'isearch-search-fun-default)

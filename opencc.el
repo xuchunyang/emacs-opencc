@@ -1,4 +1,4 @@
-;;; opencc.el --- 中文简繁转换 <-> 中文簡繁轉換  -*- lexical-binding: t; -*-
+;;; opencc.el --- 中文简繁转换 <-> 中文簡繁轉換 (Convert Chinese with OpenCC)   -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 徐春阳
 

@@ -1,4 +1,4 @@
-# opencc.el
+# opencc.el [![MELPA](https://melpa.org/packages/opencc-badge.svg)](https://melpa.org/#/opencc)
 
 ## 介绍
 
